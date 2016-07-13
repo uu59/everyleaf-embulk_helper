@@ -1,3 +1,7 @@
+## 1.0.0 - 2016-07-13
+
+Forked and renamed as "gem_release_helper".
+
 ## 0.0.6 - 2015-09-09
 
 * [fix] [gemfile] Fix 0.x-latest gemfile [#6](https://github.com/everyleaf/everyleaf-embulk_helper/pull/6)
