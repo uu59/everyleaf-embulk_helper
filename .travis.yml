@@ -10,4 +10,7 @@ addons:
   code_climate:
     repo_token: 089cf6093822f5c0502918a9590ce8284f352501199ae0261c7cef4357a418c8
 jdk:
-- oraclejdk8
+  - oraclejdk8
+
+before_install:
+  - gem i bundler
