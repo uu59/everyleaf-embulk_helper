@@ -27,6 +27,10 @@ Load rake tasks at your Rakefile:
 
     require "bundler/gem_tasks"
     require "gem_release_helper/tasks"
+    GemReleaseHelper::Tasks.install({
+      gemspec: "./your_gem.gemspec",
+      github_name: "user/repo",
+    })
 
 ## Usage
 
@@ -34,6 +38,7 @@ Load rake tasks at your Rakefile:
     rake build                     # Build embulk-input-your-plugin-0.1.0.gem into the pkg directory
     rake generate:bump_version     # Bump version
     rake generate:changelog        # Generate CHANGELOG.md from previous release
+    rake generate:gemfiles         # Generate gemfiles to test this plugin with released Embulk versions (since MIN_VERSION)
     rake generate:prepare_release  # Generate chengelog then bump version
     rake install                   # Build and install embulk-input-your-plugin-0.1.0.gem into system gems
     rake release                   # Create tag v0.1.0 and build and push embulk-input-your-plugin-0.1.0.gem to Rubygems
