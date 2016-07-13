@@ -1,16 +1,16 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'everyleaf/embulk_helper/version'
+require 'gem_release_helper/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "everyleaf-embulk_helper"
-  spec.version       = Everyleaf::EmbulkHelper::VERSION
+  spec.name          = "gem_release_helper"
+  spec.version       = GemReleaseHelper::VERSION
   spec.authors       = ["yoshihara", "uu59"]
   spec.email         = ["h.yoshihara@everyleaf.com", "k@uu59.org"]
   spec.summary       = %q{Add some handy helpers for developing Embulk plugins}
   spec.description   = %q{Add some handy helpers for developing Embulk plugins}
-  spec.homepage      = "https://github.com/everyleaf/everyleaf-embulk_helper"
+  spec.homepage      = "https://github.com/uu59/gem_release_helper"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")

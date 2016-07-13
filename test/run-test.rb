@@ -16,6 +16,6 @@ ENV["TEST_UNIT_MAX_DIFF_TARGET_STRING_SIZE"] ||= "5000"
 
 CodeClimate::TestReporter.start
 
-require "everyleaf/embulk_helper/tasks"
+require "gem_release_helper/tasks"
 
 exit Test::Unit::AutoRunner.run(true, test_dir)

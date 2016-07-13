@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    everyleaf-embulk_helper (0.0.6)
+    gem_release_helper (1.0.0)
 
 GEM
   remote: https://rubygems.org/
@@ -47,11 +47,11 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.7)
   codeclimate-test-reporter
-  everyleaf-embulk_helper!
+  gem_release_helper!
   pry
   rake (~> 10.0)
   test-unit
   test-unit-rr
 
 BUNDLED WITH
-   1.10.6
+   1.12.5

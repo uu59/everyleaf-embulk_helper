@@ -1,7 +1,7 @@
 $LOAD_PATH.unshift "./lib"
-require "everyleaf/embulk_helper/tasks"
+require "gem_release_helper/tasks"
 
-Everyleaf::EmbulkHelper::Tasks.install({
-  gemspec: "./everyleaf-embulk_helper.gemspec",
-  github_name: "everyleaf/everyleaf-embulk_helper",
+GemReleaseHelper::Tasks.install({
+  gemspec: "./gem_release_helper.gemspec",
+  github_name: "uu59/gem_release_helper",
 })
