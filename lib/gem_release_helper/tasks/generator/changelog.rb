@@ -87,7 +87,9 @@ module GemReleaseHelper
         end
 
         def pull_request_info(number)
-          body = open("https://api.github.com/repos/#{github_name}/issues/#{number}").read
+          body = open("https://api.github.com/repos/#{github_name}/issues/#{number}", {
+            "Authentication" => "token #{ENV["GITHUB_OAUTH_TOKEN"]}"
+          }).read
           JSON.parse(body)
         end
 

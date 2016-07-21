@@ -29,8 +29,9 @@ Load rake tasks at your Rakefile:
     require "gem_release_helper/tasks"
     GemReleaseHelper::Tasks.install({
       gemspec: "./your_gem.gemspec",
-      github_name: "user/repo",
+      github_name: "user/repo", # if this repo is private, you can access it by set GITHUB_OAUTH_TOKEN to environment variable
     })
+
 
 ## Usage
 
