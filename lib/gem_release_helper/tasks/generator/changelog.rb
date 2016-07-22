@@ -1,4 +1,5 @@
 require "gem_release_helper/tasks/common"
+require "open3"
 
 module GemReleaseHelper
   module Tasks
@@ -34,7 +35,18 @@ module GemReleaseHelper
         end
 
         def bump_version
-          logger.info "Version bump '#{current_version}' to '#{next_version}'"
+          logger.info "Bump version from '#{current_version}' to '#{next_version}'"
+          case where_written_version
+          when :gemspec
+            write_new_version_to_gemspec
+          when :version_file
+            write_new_version_to_version_file
+          end
+        end
+
+        private
+
+        def write_new_version_to_gemspec
           old_content = gemspec_path.read
           new_content = old_content.gsub(/(spec\.version += *)".*?"/, %Q!\\1"#{next_version}"!)
           File.open(gemspec_path, "w") do |f|
@@ -42,14 +54,47 @@ module GemReleaseHelper
           end
         end
 
-        private
+        def write_new_version_to_version_file
+          version_file = version_files.first
+          new_content = File.read(version_file).gsub(current_version.to_s, next_version.to_s)
+          File.open(version_file, "w") {|f| f.write new_content }
+        end
+
+        def where_written_version
+          if gemspec_path.read.include?(current_version.to_s)
+            :gemspec
+          else
+            version_file = version_files.first
+            if version_file && File.read(version_file).include?(current_version.to_s)
+              return :version_file
+            end
+            raise "Couldn't find where is version written"
+          end
+        end
+
+        def version_files
+          Dir["#{gemspec_path.dirname}/**/version**"]
+        end
 
         def required_options
           %w(github_name)
         end
 
         def current_version
-          ENV["CURRENT_VER"] || Gem::Version.new(gemspec_path.read[/spec\.version += *"([0-9]+\.[0-9]+\.[0-9]+)"/, 1])
+          return ENV["CURRENT_VER"] if ENV["CURRENT_VER"]
+          ver = gemspec_path.read[/spec\.version += *"([0-9]+\.[0-9]+\.[0-9]+)"/, 1] ||
+            begin
+              # from rake
+              # https://github.com/ruby/rake/blob/1b27eb2f8234190bba0e973194d38bcf09443ec0/lib/rake/file_utils.rb
+              ruby = File.join(
+                RbConfig::CONFIG['bindir'],
+                RbConfig::CONFIG['ruby_install_name'] + RbConfig::CONFIG['EXEEXT']
+              ).sub(/.*\s.*/m, '"\&"')
+              script = %Q!print eval(File.read('#{gemspec_path}')).version.to_s!
+              o, _, _ = Open3.capture3(ruby, "-e", script)
+              o.strip
+            end
+          Gem::Version.new(ver)
         end
 
         def next_version

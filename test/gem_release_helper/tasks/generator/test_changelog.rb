@@ -73,61 +73,110 @@ Merry Xmas!
         end
 
         class TestBumpVersion < self
-          def test_bump_version_task
-            any_instance_of(Changelog) do |klass|
-              mock(klass).bump_version
-              mock(klass).update_gemfile_lock
+          class TestVersionDynamic < self
+            def setup
+              @version = "1.0.0"
+              @dir = Pathname.new(Dir.tmpdir).join(Time.now.to_f.to_s)
+              @dir.mkdir
+              @version_file = @dir.join("lib/foo/version.rb")
+              FileUtils.mkdir_p @version_file.dirname
+              @version_file.write <<RUBY
+class Foo
+  VERSION = "#{@version}"
+end
+RUBY
+              @dir.join("foo.gemspec").write <<-SPEC
+# coding: utf-8
+require '#{@dir.join("lib/foo/version.rb").to_s}'
+
+Gem::Specification.new do |spec|
+  spec.name          = "foo"
+  spec.version       = Foo::VERSION
+end
+SPEC
             end
-            Tasks.install(options)
-            task = Rake::Task.tasks.find {|task| task.name == "generate:bump_version"}
-            task.execute
-          ensure
-            Rake::Task.clear
+
+            def teardown
+              FileUtils.rm_rf @dir
+            end
+
+            def test_bump_version_on_file
+              @task = Changelog.new(options)
+              mute_logger(@task)
+
+              @task.bump_version
+              assert @version_file.read.include?("1.0.1")
+              assert_equal "1.0.1", @task.send(:current_version).to_s
+            end
+
+            private
+
+            def options
+              {
+                gemspec: @dir.join("foo.gemspec").to_s,
+                github_name: "foo/foo",
+              }
+            end
           end
 
-          def test_without_option
-            @task = Changelog.new(options)
-            mute_logger(@task)
+          class TestVersionStatic < self
+            def test_bump_version_task
+              any_instance_of(Changelog) do |klass|
+                mock(klass).bump_version
+                mock(klass).update_gemfile_lock
+              end
+              Tasks.install(options)
+              task = Rake::Task.tasks.find {|t| t.name == "generate:bump_version"}
+              task.execute
+            ensure
+              Rake::Task.clear
+            end
 
-            @task.bump_version
+            def test_without_option
+              @task = Changelog.new(options)
+              mute_logger(@task)
 
-            assert_equal(<<-SPEC, gemspec_path.read)
+              @task.bump_version
+
+              assert_equal(<<-SPEC, gemspec_path.read)
 spec.version       = "0.1.3"
-            SPEC
-          end
+              SPEC
+            end
 
-          def test_with_patch
-            @task = Changelog.new(options.merge(version_target: "patch"))
-            mute_logger(@task)
+            def test_with_patch
+              @task = Changelog.new(options.merge(version_target: "patch"))
+              mute_logger(@task)
 
-            @task.bump_version
+              @task.bump_version
 
-            assert_equal(<<-SPEC, gemspec_path.read)
+              assert_equal(<<-SPEC, gemspec_path.read)
 spec.version       = "0.1.3"
-            SPEC
-          end
+              SPEC
+            end
 
-          def test_with_minor
-            @task = Changelog.new(options.merge(version_target: "minor"))
-            mute_logger(@task)
+            def test_with_minor
+              @task = Changelog.new(options.merge(version_target: "minor"))
+              mute_logger(@task)
 
-            @task.bump_version
+              @task.bump_version
 
-            assert_equal(<<-SPEC, gemspec_path.read)
+              assert_equal(<<-SPEC, gemspec_path.read)
 spec.version       = "0.2.0"
-            SPEC
-          end
+              SPEC
+            end
 
-          def test_with_major
-            @task = Changelog.new(options.merge(version_target: "major"))
-            mute_logger(@task)
+            def test_with_major
+              @task = Changelog.new(options.merge(version_target: "major"))
+              mute_logger(@task)
 
-            @task.bump_version
+              @task.bump_version
 
-            assert_equal(<<-SPEC, gemspec_path.read)
+              assert_equal(<<-SPEC, gemspec_path.read)
 spec.version       = "1.0.0"
-            SPEC
+              SPEC
+            end
           end
+
         end
 
         private
