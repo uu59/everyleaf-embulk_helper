@@ -1,3 +1,7 @@
+## 1.0.1 - 2016-07-22
+* [improve] Enable to detect/bump version using external file [#2](https://github.com/uu59/gem_release_helper/pull/2)
+* [improve] Enable to access private repo [#1](https://github.com/uu59/gem_release_helper/pull/1)
+
 ## 1.0.0 - 2016-07-13
 
 Forked and renamed as "gem_release_helper".
