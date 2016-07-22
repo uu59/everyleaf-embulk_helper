@@ -55,7 +55,7 @@ module GemReleaseHelper
         end
 
         def write_new_version_to_version_file
-          version_file = Dir["#{gemspec_path.dirname}/**/version**"].first
+          version_file = version_files.first
           new_content = File.read(version_file).gsub(current_version.to_s, next_version.to_s)
           File.open(version_file, "w") {|f| f.write new_content }
         end
@@ -64,12 +64,16 @@ module GemReleaseHelper
           if gemspec_path.read.include?(current_version.to_s)
             :gemspec
           else
-            version_file = Dir["#{gemspec_path.dirname}/**/version*"].first
+            version_file = version_files.first
             if version_file && File.read(version_file).include?(current_version.to_s)
               return :version_file
             end
             raise "Couldn't find where is version written"
           end
+        end
+
+        def version_files
+          Dir["#{gemspec_path.dirname}/**/version**"]
         end
 
         def required_options
