@@ -1,3 +1,6 @@
+## 1.0.2 - 2016-08-04
+* [improve] Enable basic auth method to access private repo
+
 ## 1.0.1 - 2016-07-22
 * [improve] Enable to detect/bump version using external file [#2](https://github.com/uu59/gem_release_helper/pull/2)
 * [improve] Enable to access private repo [#1](https://github.com/uu59/gem_release_helper/pull/1)
