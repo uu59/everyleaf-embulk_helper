@@ -29,9 +29,14 @@ Load rake tasks at your Rakefile:
     require "gem_release_helper/tasks"
     GemReleaseHelper::Tasks.install({
       gemspec: "./your_gem.gemspec",
-      github_name: "user/repo", # if this repo is private, you can access it by set GITHUB_OAUTH_TOKEN to environment variable
+      github_name: "user/repo",
     })
 
+For a private repository, you can choose a way from below:
+
+1. Set `GITHUB_OAUTH_TOKEN` environment variable.
+2. Set `GITHUB_USER_NAME` and `GITHUB_TOKEN` environment variable.
+3. Set by `git config --global github.user [your user name on GitHub]` and `git config --global github.token [your token]` (same as [this manner](https://github.com/blog/180-local-github-config))
 
 ## Usage
 

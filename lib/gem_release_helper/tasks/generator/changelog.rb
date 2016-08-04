@@ -132,9 +132,18 @@ module GemReleaseHelper
         end
 
         def pull_request_info(number)
-          body = open("https://api.github.com/repos/#{github_name}/issues/#{number}", {
-            "Authentication" => "token #{ENV["GITHUB_OAUTH_TOKEN"]}"
-          }).read
+          header =
+            if github_oauth_token
+              {
+                "Authentication" => "token #{ENV["GITHUB_OAUTH_TOKEN"]}"
+              }
+            else
+              {
+                http_basic_authentication: [github_user_name, github_personal_token]
+              }
+            end
+
+          body = open("https://api.github.com/repos/#{github_name}/issues/#{number}", header).read
           JSON.parse(body)
         end
 
@@ -160,6 +169,18 @@ module GemReleaseHelper
 
         def changelog_path
           root_dir.join("CHANGELOG.md")
+        end
+
+        def github_user_name
+          ENV["GITHUB_USER_NAME"] || `git config github.user`.strip
+        end
+
+        def github_personal_token
+          ENV["GITHUB_TOKEN"] || `git config github.token`.strip
+        end
+
+        def github_oauth_token
+          ENV["GITHUB_OAUTH_TOKEN"]
         end
       end
     end
